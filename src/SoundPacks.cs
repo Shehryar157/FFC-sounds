@@ -43,6 +43,7 @@ namespace FFCSounds
         {
             try
             {
+                MoveOldFolder();
                 EnsureFolders();
                 LoadBookSets();
                 Plugin.Instance.StartCoroutine(LoadAll());
@@ -54,6 +55,20 @@ namespace FFCSounds
         }
 
         // ---------- Folders and the book list ----------
+
+        /// <summary>
+        /// FFC Access 0.8 kept these sounds in "FFCAccess Sounds". If that folder is still around and there's no
+        /// "Sounds" folder yet, move it, so any sounds already added carry over. Nothing is ever deleted here.
+        /// </summary>
+        private static void MoveOldFolder()
+        {
+            string old = Path.Combine(Paths.GameRootPath, "FFCAccess Sounds");
+            if (Directory.Exists(old) && !Directory.Exists(Root))
+            {
+                Directory.Move(old, Root);
+                Plugin.Log.LogInfo("Moved the old FFCAccess Sounds folder to " + Root);
+            }
+        }
 
         /// <summary>Create any missing folders and help files. Never deletes or overwrites anything.</summary>
         private static void EnsureFolders()
